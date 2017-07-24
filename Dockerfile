@@ -1,4 +1,4 @@
-FROM bravado/debian
+FROM bravado/debian:jessie
 
 # add non-free repository
 RUN echo "deb http://http.us.debian.org/debian jessie contrib non-free" >> /etc/apt/sources.list
