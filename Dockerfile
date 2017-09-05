@@ -1,7 +1,7 @@
-FROM bravado/debian
+FROM bravado/debian:stretch
 
 # add non-free repository
-RUN echo "deb http://http.us.debian.org/debian jessie contrib non-free" >> /etc/apt/sources.list
+RUN echo "deb http://http.us.debian.org/debian stretch contrib non-free" >> /etc/apt/sources.list
 
 # add newrelic repository
 RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list
@@ -15,43 +15,39 @@ RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends  \
     apache2 \
-    apache2-mpm-event \
-    libapache2-mod-fastcgi \
-    php5-fpm \
-    php5-mysqlnd \
-    php5-mcrypt \
-    php5-memcache \
-    php5-curl \
-    php5-gd \
-    php5-apcu \
-    php5-imagick \
-    php5-pgsql \
-    php5-sqlite \
-    php5-intl \
-    php5-imap \
-    php5-redis \
-    php5 \
+    php7.0-fpm \
+    php7.0-mysqlnd \
+    php7.0-mcrypt \
+    php7.0-memcache \
+    php7.0-curl \
+    php7.0-gd \
+    php7.0-apcu \
+    php7.0-imagick \
+    php7.0-pgsql \
+    php7.0-sqlite \
+    php7.0-intl \
+    php7.0-imap \
+    php7.0-redis \
+    php7.0 \
     php-pear \
     ssmtp \
     && cd /opt && apt-get download newrelic-daemon newrelic-php5 newrelic-php5-common \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/*.log
 
-# Configure timezone and locale
 # Set the default timezone in cli and fpm configs
 # Setup logging to stderr
 # Enable apache modules
-RUN echo "America/Sao_Paulo" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata && \
-    sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php5/cli/php.ini && \
-    sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php5/fpm/php.ini && \
-    sed -ie 's/\/var\/log\/php5-fpm.log/\/proc\/self\/fd\/2/' /etc/php5/fpm/php-fpm.conf && \
-    sed -ie 's/${APACHE_LOG_DIR}\/error.log/\/proc\/self\/fd\/2/' /etc/apache2/apache2.conf && \
-    a2enmod actions && \
-    a2enmod expires && \
-    a2enmod headers && \
-    a2enmod rewrite && \
-    rm /etc/php5/fpm/pool.d/www.conf && \
-    rm /etc/apache2/conf-enabled/other-vhosts-access-log.conf && \
-    rm /var/www/html/index.html
+RUN a2enmod actions expires headers rewrite proxy proxy_fcgi setenvif \
+    && a2enconf php7.0-fpm \
+    && sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php/7.0/cli/php.ini \
+    && sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php/7.0/fpm/php.ini \
+    && sed -ie 's/\/var\/log\/php7.0-fpm.log/\/proc\/self\/fd\/2/' /etc/php/7.0/fpm/php-fpm.conf \
+    && sed -ie 's/${APACHE_LOG_DIR}\/error.log/\/proc\/self\/fd\/2/' /etc/apache2/apache2.conf \
+    && rm /etc/php/7.0/fpm/pool.d/www.conf \
+    && rm /etc/apache2/conf-enabled/other-vhosts-access-log.conf \
+    && rm /var/www/html/index.html \
+    && mkdir /var/run/apache2 \
+    && mkdir /run/php
 
 # container parameters that may be set at runtime
 ENV NR_APP_NAME ""
@@ -71,7 +67,7 @@ ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 # PHP vars
-ENV PHP_LISTEN /var/run/php5-fpm.sock
+ENV PHP_LISTEN /run/php/php7.0-fpm.sock
 ENV PHP_MEMORY_LIMIT 128M
 ENV PHP_MAX_SPARE_SERVERS 6
 ENV PHP_MIN_SPARE_SERVERS 2
@@ -80,7 +76,7 @@ ENV PHP_START_SERVERS 4
 ENV PHP_MAX_CHILDREN 10
 ENV PHP_CATCH_WORKERS_OUTPUT no
 ENV PHP_SESSION_SAVE_HANDLER files
-ENV PHP_SESSION_SAVE_PATH /var/lib/php5/sessions
+ENV PHP_SESSION_SAVE_PATH /var/lib/php/sessions
 ENV PHP_UPLOAD_MAX_FILESIZE 50M
 ENV PHP_POST_MAX_SIZE 50M
 ENV PHP_SHORT_OPEN_TAG On

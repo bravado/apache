@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Check if php is configured
-if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
+if [ ! -f /etc/php/7.0/fpm/pool.d/www.conf ]; then
 
-  sed -ie "s/\(max_execution_time\ =\ \).*/\1$PHP_MAX_EXECUTION_TIME/" /etc/php5/fpm/php.ini
+  sed -ie "s/\(max_execution_time\ =\ \).*/\1$PHP_MAX_EXECUTION_TIME/" /etc/php/7.0/fpm/php.ini
 
   sed -e "s;\$PHP_LISTEN;$PHP_LISTEN;g" \
       -e "s;\$PHP_MEMORY_LIMIT;$PHP_MEMORY_LIMIT;g" \
@@ -18,10 +18,10 @@ if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
       -e "s;\$PHP_MAX_REQUESTS;$PHP_MAX_REQUESTS;g" \
       -e "s;\$PHP_MAX_INPUT_VARS;$PHP_MAX_INPUT_VARS;g" \
       -e "s;\$PHP_SHORT_OPEN_TAG;$PHP_SHORT_OPEN_TAG;g" \
-      /etc/php5/fpm/www.tpl > /etc/php5/fpm/pool.d/www.conf
+      /etc/php/7.0/fpm/www.tpl > /etc/php/7.0/fpm/pool.d/www.conf
 
 # Configure opcache
-cat << EOF > /etc/php5/mods-available/opcache.ini
+cat << EOF > /etc/php/7.0/fpm/conf.d/10-opcache.ini
 zend_extension=opcache.so
 
 opcache.enable=$OPCACHE_ENABLE
@@ -36,7 +36,7 @@ opcache.save_comments=$OPCACHE_SAVE_COMMENTS
 EOF
 
 # Configure apcu
-cat << EOF > /etc/php5/mods-available/apcu.ini
+cat << EOF > /etc/php/7.0/fpm/conf.d/20-apcu.ini
 extension=apcu.so
 apc.shm_size=$APC_SHM_SIZE
 EOF

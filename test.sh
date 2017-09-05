@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cid=$(docker run -d -v $(pwd)/tests:/var/www/html bravado/apache)
+cid=$(docker run -d -v $(pwd)/tests:/var/www/html bravado/apache:php7)
 
 
 ip=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $cid)
