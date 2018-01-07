@@ -53,9 +53,6 @@ RUN a2enmod actions expires headers rewrite proxy proxy_fcgi setenvif \
 ENV NR_APP_NAME ""
 ENV NR_INSTALL_KEY ""
 
-ENV PUID 1000
-ENV PGID 1000
-
 # Apache vars
 ENV APACHE_RUN_USER www-data
 ENV APACHE_RUN_GROUP www-data
