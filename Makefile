@@ -2,11 +2,14 @@
 
 default: build
 
-build:
-	docker build -t bravado/apache:php7 .
+init:
+	$(eval GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD))
+
+build: init
+	docker build -t bravado/apache:${GIT_BRANCH} .
 
 test: build
-	bash test.sh
+	bash test.sh ${GIT_BRANCH}
 
 bash: build
-	docker run -it --rm --entrypoint bash bravado/apache:php7
+	docker run -it --rm --entrypoint bash bravado/apache:${GIT_BRANCH}
