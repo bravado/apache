@@ -61,7 +61,7 @@ ENV APACHE_RUN_DIR /var/run/apache2
 ENV APACHE_CONF_DIR /etc/apache2
 ENV APACHE_LOG_DIR /var/log/apache2
 ENV APACHE_LOCK_DIR /var/lock/apache2
-ENV APACHE_DOCUMENT_ROOT /var/www/public
+ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 # PHP vars
 ENV PHP_LISTEN /run/php/php7.2-fpm.sock

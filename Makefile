@@ -11,5 +11,5 @@ build: init
 test: build
 	bash test.sh ${GIT_BRANCH}
 
-bash: build
+bash:
 	docker run -it --rm --entrypoint bash bravado/apache:${GIT_BRANCH}
