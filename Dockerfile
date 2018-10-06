@@ -28,6 +28,7 @@ RUN apt-get update && \
     php7.2-intl \
     php7.2-imap \
     php7.2-redis \
+    php7.2-ldap \
     php7.2 \
     php-pear \
     ssmtp \
