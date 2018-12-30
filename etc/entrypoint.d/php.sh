@@ -19,6 +19,7 @@ if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
       -e "s;\$PHP_MAX_REQUESTS;$PHP_MAX_REQUESTS;g" \
       -e "s;\$PHP_MAX_INPUT_VARS;$PHP_MAX_INPUT_VARS;g" \
       -e "s;\$PHP_SHORT_OPEN_TAG;$PHP_SHORT_OPEN_TAG;g" \
+      -e "s;\$PHP_REGISTER_GLOBALS;$PHP_REGISTER_GLOBALS;g" \
       /etc/php5/fpm/www.tpl > /etc/php5/fpm/pool.d/www.conf
 
 # Configure apc
