@@ -3,6 +3,7 @@
 if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
 
   sed -ie "s/\(max_execution_time\ =\ \).*/\1$PHP_MAX_EXECUTION_TIME/" /etc/php5/fpm/php.ini
+  sed -ie "s/\(register_globals\ =\ \).*/\1$PHP_REGISTER_GLOBALS/" /etc/php5/fpm/php.ini
   sed -ie "s/;\(daemonize\ =\ \).*/daemonize=no/" /etc/php5/fpm/php-fpm.conf
 
   sed -e "s;\$PHP_LISTEN;$PHP_LISTEN;g" \
@@ -19,7 +20,6 @@ if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
       -e "s;\$PHP_MAX_REQUESTS;$PHP_MAX_REQUESTS;g" \
       -e "s;\$PHP_MAX_INPUT_VARS;$PHP_MAX_INPUT_VARS;g" \
       -e "s;\$PHP_SHORT_OPEN_TAG;$PHP_SHORT_OPEN_TAG;g" \
-      -e "s;\$PHP_REGISTER_GLOBALS;$PHP_REGISTER_GLOBALS;g" \
       /etc/php5/fpm/www.tpl > /etc/php5/fpm/pool.d/www.conf
 
 # Configure apc
