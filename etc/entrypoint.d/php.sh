@@ -3,6 +3,7 @@
 if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
 
   sed -ie "s/\(max_execution_time\ =\ \).*/\1$PHP_MAX_EXECUTION_TIME/" /etc/php5/fpm/php.ini
+  sed -ie "s/;\(daemonize\ =\ \).*/daemonize=no/" /etc/php5/fpm/php-fpm.conf
 
   sed -e "s;\$PHP_LISTEN;$PHP_LISTEN;g" \
       -e "s;\$PHP_MEMORY_LIMIT;$PHP_MEMORY_LIMIT;g" \
@@ -19,26 +20,5 @@ if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
       -e "s;\$PHP_MAX_INPUT_VARS;$PHP_MAX_INPUT_VARS;g" \
       -e "s;\$PHP_SHORT_OPEN_TAG;$PHP_SHORT_OPEN_TAG;g" \
       /etc/php5/fpm/www.tpl > /etc/php5/fpm/pool.d/www.conf
-
-# Configure opcache
-cat << EOF > /etc/php5/mods-available/opcache.ini
-zend_extension=opcache.so
-
-opcache.enable=$OPCACHE_ENABLE
-opcache.fast_shutdown=$OPCACHE_FAST_SHUTDOWN
-opcache.memory_comsuption=$OPCACHE_MEMORY_COMSUPTION
-opcache.revalidate_path=$OPCACHE_REVALIDATE_PATH
-opcache.max_accelerated_files=$OPCACHE_MAX_ACCELERATED_FILES
-opcache.interned_strings_buffer=$OPCACHE_INTERNED_STRINGS_BUFFER
-opcache.validate_timestamps=$OPCACHE_VALIDATE_TIMESTAMPS
-opcache.revalidate_freq=$OPCACHE_REVALIDATE_FREQ
-opcache.save_comments=$OPCACHE_SAVE_COMMENTS
-EOF
-
-# Configure apcu
-cat << EOF > /etc/php5/mods-available/apcu.ini
-extension=apcu.so
-apc.shm_size=$APC_SHM_SIZE
-EOF
 
 fi

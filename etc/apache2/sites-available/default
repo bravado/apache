@@ -18,15 +18,7 @@
 <Directory ${APACHE_DOCUMENT_ROOT}>
     Options -Indexes -MultiViews +FollowSymLinks
     AllowOverride All
-    Require all granted
-
-    <IfModule mod_rewrite.c>
-         RewriteEngine on
-         RewriteOptions InheritBefore
-         RewriteBase /
-         RewriteCond %{REQUEST_URI} ^/php5-fcgi(.*)
-         RewriteRule . - [L]
-    </IfModule>
+    Allow from all
 
     Include h5bp-common.conf
 </Directory>

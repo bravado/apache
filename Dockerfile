@@ -1,7 +1,4 @@
-FROM bravado/debian:jessie
-
-# add non-free repository
-RUN echo "deb http://http.us.debian.org/debian jessie contrib non-free" >> /etc/apt/sources.list
+FROM ubuntu:12.04
 
 # add newrelic repository
 RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sources.list.d/newrelic.list
@@ -9,6 +6,9 @@ RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sour
 # trust in newrelic key
 ADD https://download.newrelic.com/548C16BF.gpg /tmp/newrelic.gpg
 RUN apt-key add /tmp/newrelic.gpg
+
+# add non-free repository
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise multiverse" >> /etc/apt/sources.list
 
 # Update the package lists and install everything
 RUN apt-get update && \
@@ -23,16 +23,17 @@ RUN apt-get update && \
     php5-memcache \
     php5-curl \
     php5-gd \
-    php5-apcu \
     php5-imagick \
     php5-pgsql \
     php5-sqlite \
     php5-intl \
     php5-imap \
-    php5-redis \
     php5-ldap \
     php5 \
     php-pear \
+    supervisor \
+    unzip \
+    curl \
     ssmtp \
     && cd /opt && apt-get download newrelic-daemon newrelic-php5 newrelic-php5-common \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/log/*.log
@@ -50,9 +51,7 @@ RUN echo "America/Sao_Paulo" > /etc/timezone && dpkg-reconfigure -f noninteracti
     a2enmod expires && \
     a2enmod headers && \
     a2enmod rewrite && \
-    rm /etc/php5/fpm/pool.d/www.conf && \
-    rm /etc/apache2/conf-enabled/other-vhosts-access-log.conf && \
-    rm /var/www/html/index.html
+    rm /etc/php5/fpm/pool.d/www.conf
 
 # container parameters that may be set at runtime
 ENV NR_APP_NAME ""
@@ -104,3 +103,8 @@ ENV APC_SHM_SIZE 128M
 EXPOSE 80
 
 ADD etc /etc
+
+RUN chmod +x /etc/entrypoint.sh && mkdir /var/run/apache2 && mkdir /var/www/html
+
+
+ENTRYPOINT '/etc/entrypoint.sh'
