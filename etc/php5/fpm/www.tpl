@@ -374,4 +374,4 @@ php_value[upload_max_filesize] = $PHP_UPLOAD_MAX_FILESIZE
 php_value[max_input_vars] = $PHP_MAX_INPUT_VARS
 php_admin_value[post_max_size] = $PHP_POST_MAX_SIZE
 php_admin_value[short_open_tag] = $PHP_SHORT_OPEN_TAG
-
+php_admin_value[register_globals] = $PHP_REGISTER_GLOBALS
