@@ -7,28 +7,20 @@ RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' > /etc/apt/sour
 ADD https://download.newrelic.com/548C16BF.gpg /tmp/newrelic.gpg
 RUN apt-key add /tmp/newrelic.gpg
 
-# add non-free repository
-RUN echo "deb http://archive.ubuntu.com/ubuntu precise multiverse" >> /etc/apt/sources.list
-
 # Update the package lists and install everything
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends  \
     apache2 \
-    apache2-mpm-event \
-    libapache2-mod-fastcgi \
-    php5-fpm \
+    libapache2-mod-php5 \
     php5-mysqlnd \
     php5-mcrypt \
     php5-memcache \
     php5-curl \
     php5-gd \
     php5-imagick \
-    php5-pgsql \
-    php5-sqlite \
     php5-intl \
     php5-imap \
-    php5-ldap \
     php5 \
     php-pear \
     php-apc \
@@ -45,14 +37,12 @@ RUN apt-get update && \
 # Enable apache modules
 RUN echo "America/Sao_Paulo" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata && \
     sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php5/cli/php.ini && \
-    sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php5/fpm/php.ini && \
-    sed -ie 's/\/var\/log\/php5-fpm.log/\/proc\/self\/fd\/2/' /etc/php5/fpm/php-fpm.conf && \
+    sed -ie 's/\;date\.timezone\ \=/date\.timezone\ \=\ America\/Sao_Paulo/g' /etc/php5/apache2/php.ini && \
     sed -ie 's/${APACHE_LOG_DIR}\/error.log/\/proc\/self\/fd\/2/' /etc/apache2/apache2.conf && \
     a2enmod actions && \
     a2enmod expires && \
     a2enmod headers && \
-    a2enmod rewrite && \
-    rm /etc/php5/fpm/pool.d/www.conf
+    a2enmod rewrite
 
 # container parameters that may be set at runtime
 ENV NR_APP_NAME ""
@@ -72,20 +62,12 @@ ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_DOCUMENT_ROOT /var/www/html
 
 # PHP vars
-ENV PHP_LISTEN /var/run/php5-fpm.sock
 ENV PHP_MEMORY_LIMIT 128M
-ENV PHP_MAX_SPARE_SERVERS 6
-ENV PHP_MIN_SPARE_SERVERS 2
-ENV PHP_MAX_REQUESTS 0
-ENV PHP_START_SERVERS 4
-ENV PHP_MAX_CHILDREN 10
-ENV PHP_CATCH_WORKERS_OUTPUT no
 ENV PHP_SESSION_SAVE_HANDLER files
 ENV PHP_SESSION_SAVE_PATH /var/lib/php5/sessions
 ENV PHP_UPLOAD_MAX_FILESIZE 50M
 ENV PHP_POST_MAX_SIZE 50M
 ENV PHP_SHORT_OPEN_TAG On
-ENV PHP_MAX_INPUT_VARS 1000
 ENV PHP_MAX_EXECUTION_TIME 30
 ENV PHP_REGISTER_GLOBALS Off
 
@@ -101,7 +83,6 @@ EXPOSE 80
 
 ADD etc /etc
 
-RUN chmod +x /etc/entrypoint.sh && mkdir /var/run/apache2 && mkdir /var/www/html \
-	&& mkdir /var/lib/php5/sessions && chown www-data:www-data /var/lib/php5/sessions
+RUN chmod +x /etc/entrypoint.sh && mkdir /var/run/apache2 && mkdir /var/www/html
 
 ENTRYPOINT '/etc/entrypoint.sh'
