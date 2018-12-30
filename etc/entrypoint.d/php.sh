@@ -21,4 +21,16 @@ if [ ! -f /etc/php5/fpm/pool.d/www.conf ]; then
       -e "s;\$PHP_SHORT_OPEN_TAG;$PHP_SHORT_OPEN_TAG;g" \
       /etc/php5/fpm/www.tpl > /etc/php5/fpm/pool.d/www.conf
 
+# Configure apc
+cat << EOF > /etc/php5/conf.d/apc.ini
+extension=apc.so
+
+apc.enabled=$APC_ENABLED
+apc.shm_size=$APC_SHM_SIZE
+apc.num_files_hint=$APC_NUM_FILES_HINT
+apc.ttl=$APC_TTL
+apc.user_ttl=$APC_USER_TTL
+apc.gc_ttl=$APC_GC_TTL
+EOF
+
 fi

@@ -31,6 +31,7 @@ RUN apt-get update && \
     php5-ldap \
     php5 \
     php-pear \
+    php-apc \
     supervisor \
     unzip \
     curl \
@@ -88,24 +89,19 @@ ENV PHP_MAX_INPUT_VARS 1000
 ENV PHP_MAX_EXECUTION_TIME 30
 ENV PHP_REGISTER_GLOBALS Off
 
-ENV OPCACHE_ENABLE 1
-ENV OPCACHE_FAST_SHUTDOWN 0
-ENV OPCACHE_MEMORY_COMSUPTION 64
-ENV OPCACHE_REVALIDATE_PATH 1
-ENV OPCACHE_MAX_ACCELERATED_FILES 7963
-ENV OPCACHE_INTERNED_STRINGS_BUFFER 4
-ENV OPCACHE_VALIDATE_TIMESTAMPS 1
-ENV OPCACHE_REVALIDATE_FREQ 15
-ENV OPCACHE_SAVE_COMMENTS 1
-
-ENV APC_SHM_SIZE 128M
+ENV APC_ENABLED 1
+ENV APC_SHM_SIZE 32M
+ENV APC_NUM_FILES_HINT 1000
+ENV APC_TTL 60
+ENV APC_USER_TTL 300
+ENV APC_GC_TTL 3600
 # end of parameters
 
 EXPOSE 80
 
 ADD etc /etc
 
-RUN chmod +x /etc/entrypoint.sh && mkdir /var/run/apache2 && mkdir /var/www/html
-
+RUN chmod +x /etc/entrypoint.sh && mkdir /var/run/apache2 && mkdir /var/www/html \
+	&& mkdir /var/lib/php5/sessions && chown www-data:www-data /var/lib/php5/sessions
 
 ENTRYPOINT '/etc/entrypoint.sh'
